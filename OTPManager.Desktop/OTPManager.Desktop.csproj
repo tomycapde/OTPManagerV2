@@ -24,6 +24,10 @@
     <Version>1.1.0</Version>
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <FileVersion>1.1.0.0</FileVersion>
+    <AssemblyName>OTPManagerV2</AssemblyName>
+    <Product>OTPManagerV2</Product>
+    <Company>Tomas Capdevila</Company>
+    <Description>Generador y gestor de códigos de verificación en dos pasos (2FA / TOTP) para Windows</Description>
     <ApplicationIcon>app.ico</ApplicationIcon>
   </PropertyGroup>
 
