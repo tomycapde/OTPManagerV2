@@ -17,7 +17,13 @@ Este documento contiene los requisitos técnicos, pasos para compilar, depurar y
 
 ## 2. Compilación y Ejecución desde la Consola
 
-Puedes compilar y ejecutar el proyecto principal directamente con la CLI de .NET:
+Puedes clonar, compilar y ejecutar el proyecto principal directamente con la CLI de .NET:
+
+### Clonar el repositorio:
+```powershell
+git clone https://github.com/tomycapde/OTPManagerV2.git
+cd OTPManagerV2
+```
 
 ### Compilar la solución completa:
 ```powershell

@@ -48,21 +48,26 @@ Para conocer los detalles de diseño, arquitectura y almacenamiento:
 
 ---
 
-## 🚀 Inicio Rápido (Compilación y Ejecución)
+## 🚀 Descarga e Instalación
 
-### Requisitos
-* Windows 10 (1809+) o Windows 11.
-* [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+No necesitas compilar el proyecto para empezar a usarlo. Puedes descargar la versión portable precompilada y autocontenida directamente desde la sección de lanzamientos:
 
-### Compilar y Ejecutar
-```powershell
-# Clonar el repositorio
-git clone https://github.com/tomycapde/OTPManagerV2.git
-cd OTPManagerV2
+👉 **[Descargar la última versión en GitHub Releases](https://github.com/tomycapde/OTPManagerV2/releases/latest)**
 
-# Ejecutar la aplicación
-dotnet run --project OTPManager.Desktop/OTPManager.Desktop.csproj
-```
+### Pasos rápidos:
+1. Descarga el archivo `.zip` de la última versión disponible (ej. `OTPManagerV2-v1.2.0-win-x64.zip`).
+2. Descomprímelo en cualquier carpeta de tu equipo.
+3. Ejecuta **`OTPManagerV2.exe`**.
+
+> 💡 **Nota:** La aplicación es **100% portable y autocontenida**. No requiere instalación previa ni tener instalado el SDK o Runtime de .NET en Windows.
+
+---
+
+## 🛠️ Desarrollo y Compilación
+
+Si deseas compilar el código fuente por tu cuenta, depurar o contribuir al proyecto:
+
+* Consulta la **[Guía de Desarrollo y Compilación](docs/guia-desarrollo-y-compilacion.md)** para conocer los requisitos previos, instrucciones para clonar y compilar con la CLI de .NET o Visual Studio, y los comandos para empaquetar ejecutables.
 
 ---
 
