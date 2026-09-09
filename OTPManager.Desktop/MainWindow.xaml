@@ -5,13 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OTPManager.Desktop"
         mc:Ignorable="d"
-        Title="OTP Manager v1.1" 
+        Title="OTP Manager v1.2" 
         Icon="Assets/icon.png"
-        Height="680" Width="500"
-        MinWidth="440" MinHeight="500"
+        Height="680" Width="510"
+        MinWidth="380" MinHeight="500"
         WindowStartupLocation="CenterScreen"
         Background="#F5F6F8"
-        FontFamily="Segoe UI">
+        FontFamily="Segoe UI"
+        SizeChanged="Window_SizeChanged">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
@@ -111,23 +112,28 @@
         </Grid.RowDefinitions>
 
         <!-- Header with Menus -->
-        <Border Grid.Row="0" Background="#FFFFFF" BorderBrush="#E2E4E8" BorderThickness="0,0,0,1" Padding="18,12">
-            <Grid>
+        <Border Grid.Row="0" Background="#FFFFFF" BorderBrush="#E2E4E8" BorderThickness="0,0,0,1" Padding="16,12">
+            <Grid x:Name="HeaderGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0">
                     <TextBlock Text="🛡️" FontSize="20" Margin="0,0,8,0" VerticalAlignment="Center"/>
                     <TextBlock Text="OTP Manager" FontSize="18" FontWeight="Bold" Foreground="#1F242E" VerticalAlignment="Center"/>
                     <Border Background="#E8F1FB" CornerRadius="4" Padding="5,1" Margin="8,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="v1.1" FontSize="10" FontWeight="Bold" Foreground="#005A9E"/>
+                        <TextBlock Text="v1.2" FontSize="10" FontWeight="Bold" Foreground="#005A9E"/>
                     </Border>
                 </StackPanel>
 
-                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- Action Buttons: wraps underneath Title when window width < 570px -->
+                <WrapPanel x:Name="HeaderButtonsPanel" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center">
                     <!-- Backup Menu Button -->
                     <Button x:Name="BackupMenuBtn" Content="📁 Copia de seguridad ▾" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BackupMenu_Click">
                         <Button.ContextMenu>
@@ -150,7 +156,7 @@
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
-                </StackPanel>
+                </WrapPanel>
             </Grid>
         </Border>
 
@@ -184,58 +190,84 @@
 
         <!-- Main Content Area -->
         <Grid Grid.Row="3" Margin="16,0,16,16">
-            <!-- Account List -->
-            <ScrollViewer x:Name="AccountsScrollViewer" VerticalScrollBarVisibility="Auto">
-                <ItemsControl x:Name="AccountsList">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Style="{StaticResource AccountCardStyle}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
+            <!-- Account List (Virtualized) -->
+            <ListBox x:Name="AccountsList"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Padding="0"
+                     Margin="0"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     ScrollViewer.CanContentScroll="True"
+                     VirtualizingPanel.IsVirtualizing="True"
+                     VirtualizingPanel.VirtualizationMode="Recycling"
+                     VirtualizingPanel.ScrollUnit="Pixel"
+                     HorizontalContentAlignment="Stretch">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <ContentPresenter HorizontalAlignment="Stretch"/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource AccountCardStyle}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
-                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding AccountName}" FontWeight="Bold" FontSize="15" Foreground="#005A9E" TextTrimming="CharacterEllipsis" Margin="0,0,0,3"/>
-                                        
-                                        <!-- Tags Chips -->
-                                        <ItemsControl ItemsSource="{Binding Tags}" Margin="0,1,0,6" Visibility="{Binding HasTags, Converter={StaticResource BoolToVis}}">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Horizontal"/>
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Border Background="#EEF4FC" BorderBrush="#CCE3F8" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,5,3">
-                                                        <TextBlock Text="{Binding}" FontSize="11" FontWeight="SemiBold" Foreground="#005A9E"/>
-                                                    </Border>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding AccountName}" FontWeight="Bold" FontSize="15" Foreground="#005A9E" TextTrimming="CharacterEllipsis" Margin="0,0,0,3"/>
+                                    
+                                    <!-- Tags Chips -->
+                                    <ItemsControl ItemsSource="{Binding Tags}" Margin="0,1,0,6" Visibility="{Binding HasTags, Converter={StaticResource BoolToVis}}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#EEF4FC" BorderBrush="#CCE3F8" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,5,3">
+                                                    <TextBlock Text="{Binding}" FontSize="11" FontWeight="SemiBold" Foreground="#005A9E"/>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
 
-                                        <TextBlock Text="{Binding FormattedOTP}" FontFamily="Consolas, Segoe UI" FontSize="28" FontWeight="Bold" Foreground="#1F242E"/>
-                                    </StackPanel>
+                                    <TextBlock Text="{Binding FormattedOTP}" FontFamily="Consolas, Segoe UI" FontSize="28" FontWeight="Bold" Foreground="#1F242E"/>
+                                </StackPanel>
 
-                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
-                                        <Button Content="Copiar" Style="{StaticResource CopyButtonStyle}" Tag="{Binding}" Click="CopyCode_Click" Margin="0,0,6,0" ToolTip="Copiar código al portapapeles"/>
-                                        
-                                        <Button Content="⋮" Width="30" Height="30" FontSize="16" Background="Transparent" BorderThickness="0" Foreground="#666666" Cursor="Hand" Click="ItemMenu_Click" Tag="{Binding}">
-                                            <Button.ContextMenu>
-                                                <ContextMenu>
-                                                    <MenuItem Header="✏️ Editar" Click="EditAccount_Click"/>
-                                                    <MenuItem Header="🗑️ Eliminar" Click="DeleteAccount_Click"/>
-                                                </ContextMenu>
-                                            </Button.ContextMenu>
-                                        </Button>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
+                                    <Button Content="Copiar" Style="{StaticResource CopyButtonStyle}" Tag="{Binding}" Click="CopyCode_Click" Margin="0,0,6,0" ToolTip="Copiar código al portapapeles"/>
+                                    
+                                    <Button Content="⋮" Width="30" Height="30" FontSize="16" Background="Transparent" BorderThickness="0" Foreground="#666666" Cursor="Hand" Click="ItemMenu_Click" Tag="{Binding}">
+                                        <Button.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="✏️ Editar" Click="EditAccount_Click"/>
+                                                <MenuItem Header="🗑️ Eliminar" Click="DeleteAccount_Click"/>
+                                            </ContextMenu>
+                                        </Button.ContextMenu>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
 
             <!-- Empty State 1: No accounts saved -->
             <StackPanel x:Name="EmptyVaultBanner" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed">

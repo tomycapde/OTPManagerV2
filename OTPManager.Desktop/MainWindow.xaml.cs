@@ -5,11 +5,14 @@ using OTPManager.Desktop.Views;
 using OTPManager.Shared.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Threading;
 
 namespace OTPManager.Desktop
@@ -17,23 +20,71 @@ namespace OTPManager.Desktop
     public partial class MainWindow : Window
     {
         private readonly DesktopStorageService storage = new DesktopStorageService();
-        private readonly List<OTPDisplayItem> allItems = new List<OTPDisplayItem>();
+        private readonly ObservableCollection<OTPDisplayItem> allItems = new ObservableCollection<OTPDisplayItem>();
+        private readonly ICollectionView itemsView;
         private readonly DispatcherTimer timer = new DispatcherTimer();
-        private DateTime lastStepTime = DateTime.MinValue;
+        private readonly DispatcherTimer searchDebounceTimer = new DispatcherTimer();
+        private string[] currentSearchTokens = Array.Empty<string>();
+        private long lastTotpStep = -1;
 
         public MainWindow()
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
 
+            itemsView = CollectionViewSource.GetDefaultView(allItems);
+            itemsView.Filter = FilterItem;
+            AccountsList.ItemsSource = itemsView;
+
             timer.Interval = TimeSpan.FromMilliseconds(100);
             timer.Tick += Timer_Tick;
+
+            searchDebounceTimer.Interval = TimeSpan.FromMilliseconds(150);
+            searchDebounceTimer.Tick += SearchDebounceTimer_Tick;
         }
+
+        private bool? isHeaderWrapped = null;
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            UpdateHeaderLayout(ActualWidth);
             await LoadAccountsAsync();
             timer.Start();
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateHeaderLayout(e.NewSize.Width);
+        }
+
+        private void UpdateHeaderLayout(double windowWidth)
+        {
+            if (HeaderButtonsPanel == null) return;
+
+            const double wrapBreakpoint = 570.0;
+            bool shouldWrap = windowWidth < wrapBreakpoint;
+
+            if (isHeaderWrapped == shouldWrap) return;
+            isHeaderWrapped = shouldWrap;
+
+            if (shouldWrap)
+            {
+                // Two-row mode: wrap buttons underneath title
+                Grid.SetRow(HeaderButtonsPanel, 1);
+                Grid.SetColumn(HeaderButtonsPanel, 0);
+                Grid.SetColumnSpan(HeaderButtonsPanel, 3);
+                HeaderButtonsPanel.Margin = new Thickness(0, 10, 0, 0);
+                HeaderButtonsPanel.HorizontalAlignment = HorizontalAlignment.Left;
+            }
+            else
+            {
+                // Single-row mode: title left, buttons right
+                Grid.SetRow(HeaderButtonsPanel, 0);
+                Grid.SetColumn(HeaderButtonsPanel, 2);
+                Grid.SetColumnSpan(HeaderButtonsPanel, 1);
+                HeaderButtonsPanel.Margin = new Thickness(0);
+                HeaderButtonsPanel.HorizontalAlignment = HorizontalAlignment.Right;
+            }
         }
 
         private async Task LoadAccountsAsync()
@@ -46,6 +97,7 @@ namespace OTPManager.Desktop
                 {
                     allItems.Add(new OTPDisplayItem(gen));
                 }
+                lastTotpStep = DateTimeOffset.UtcNow.ToUnixTimeSeconds() / OTPGenerator.TimeStepSeconds;
                 UpdateTagFilterBar();
                 ApplySearchFilter();
             }
@@ -109,6 +161,7 @@ namespace OTPManager.Desktop
         {
             if (sender is Button btn && btn.Tag is string tag)
             {
+                searchDebounceTimer.Stop();
                 if (string.IsNullOrEmpty(tag))
                 {
                     SearchBox.Text = string.Empty;
@@ -124,6 +177,7 @@ namespace OTPManager.Desktop
                         SearchBox.Text = tag;
                     }
                 }
+                ApplySearchFilter();
             }
         }
 
@@ -170,9 +224,10 @@ namespace OTPManager.Desktop
                 TotpProgressBar.Foreground = System.Windows.Media.Brushes.DodgerBlue;
             }
 
-            if (now.Subtract(lastStepTime).TotalSeconds >= 1)
+            long currentStep = DateTimeOffset.UtcNow.ToUnixTimeSeconds() / OTPGenerator.TimeStepSeconds;
+            if (currentStep != lastTotpStep)
             {
-                lastStepTime = now;
+                lastTotpStep = currentStep;
                 foreach (var item in allItems)
                 {
                     item.UpdateOTP(now);
@@ -180,60 +235,75 @@ namespace OTPManager.Desktop
             }
         }
 
+        private void SearchDebounceTimer_Tick(object? sender, EventArgs e)
+        {
+            searchDebounceTimer.Stop();
+            ApplySearchFilter();
+        }
+
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var query = SearchBox.Text;
             SearchPlaceholder.Visibility = string.IsNullOrEmpty(query) ? Visibility.Visible : Visibility.Collapsed;
             ClearSearchBtn.Visibility = string.IsNullOrEmpty(query) ? Visibility.Collapsed : Visibility.Visible;
-            ApplySearchFilter();
+
+            searchDebounceTimer.Stop();
+            searchDebounceTimer.Start();
         }
 
         private void ClearSearch_Click(object sender, RoutedEventArgs e)
         {
+            searchDebounceTimer.Stop();
             SearchBox.Text = string.Empty;
+            ApplySearchFilter();
             SearchBox.Focus();
+        }
+
+        private bool FilterItem(object obj)
+        {
+            if (obj is not OTPDisplayItem item) return false;
+            if (currentSearchTokens.Length == 0) return true;
+
+            for (int i = 0; i < currentSearchTokens.Length; i++)
+            {
+                if (item.SearchableText.IndexOf(currentSearchTokens[i], StringComparison.OrdinalIgnoreCase) < 0)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private void ApplySearchFilter()
         {
-            var query = SearchBox.Text?.Trim();
+            var rawQuery = SearchBox.Text?.Trim() ?? string.Empty;
+            currentSearchTokens = string.IsNullOrWhiteSpace(rawQuery)
+                ? Array.Empty<string>()
+                : rawQuery.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
             UpdateTagFilterBarActiveState();
 
             if (allItems.Count == 0)
             {
-                AccountsScrollViewer.Visibility = Visibility.Collapsed;
+                AccountsList.Visibility = Visibility.Collapsed;
                 EmptyVaultBanner.Visibility = Visibility.Visible;
                 NoSearchResultsBanner.Visibility = Visibility.Collapsed;
                 return;
             }
 
             EmptyVaultBanner.Visibility = Visibility.Collapsed;
+            itemsView.Refresh();
 
-            List<OTPDisplayItem> filtered;
-            if (string.IsNullOrWhiteSpace(query))
+            if (itemsView.IsEmpty)
             {
-                filtered = allItems.ToList();
-            }
-            else
-            {
-                filtered = allItems
-                    .Where(x => x.AccountName.Contains(query, StringComparison.CurrentCultureIgnoreCase)
-                             || x.TagsString.Contains(query, StringComparison.CurrentCultureIgnoreCase)
-                             || (!string.IsNullOrEmpty(x.Issuer) && x.Issuer.Contains(query, StringComparison.CurrentCultureIgnoreCase)))
-                    .ToList();
-            }
-
-            if (filtered.Count == 0)
-            {
-                AccountsScrollViewer.Visibility = Visibility.Collapsed;
-                NoSearchResultsText.Text = $"No se encontraron cuentas para '{query}'";
+                AccountsList.Visibility = Visibility.Collapsed;
+                NoSearchResultsText.Text = $"No se encontraron cuentas para '{rawQuery}'";
                 NoSearchResultsBanner.Visibility = Visibility.Visible;
             }
             else
             {
-                AccountsScrollViewer.Visibility = Visibility.Visible;
+                AccountsList.Visibility = Visibility.Visible;
                 NoSearchResultsBanner.Visibility = Visibility.Collapsed;
-                AccountsList.ItemsSource = filtered;
             }
         }
 

@@ -16,9 +16,10 @@ namespace OTPManager.Desktop.Models
             ? Generator.Label 
             : (!string.IsNullOrWhiteSpace(Generator.Issuer) ? Generator.Issuer : "Cuenta sin nombre");
 
-        public List<string> Tags => Generator.GetTagList();
-        public bool HasTags => Tags.Count > 0;
-        public string TagsString => string.Join(" ", Tags);
+        public List<string> Tags { get; }
+        public bool HasTags { get; }
+        public string TagsString { get; }
+        public string SearchableText { get; }
 
         private string formattedOtp = "------";
         public string FormattedOTP
@@ -65,6 +66,10 @@ namespace OTPManager.Desktop.Models
         public OTPDisplayItem(OTPGenerator generator)
         {
             Generator = generator ?? throw new ArgumentNullException(nameof(generator));
+            Tags = Generator.GetTagList();
+            HasTags = Tags.Count > 0;
+            TagsString = string.Join(" ", Tags);
+            SearchableText = $"{AccountName} {Issuer} {TagsString}".ToLowerInvariant();
             UpdateOTP(DateTime.UtcNow);
         }
 
