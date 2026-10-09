@@ -1,4 +1,5 @@
-﻿using System.Windows;
+using OTPManager.Desktop.Services;
+using System.Windows;
 
 namespace OTPManager.Desktop.Views
 {
@@ -9,6 +10,7 @@ namespace OTPManager.Desktop.Views
         public PasswordDialog(string prompt = "Introduce la contraseña:")
         {
             InitializeComponent();
+            ThemeService.RegisterWindow(this);
             PromptText.Text = prompt;
             Loaded += (s, e) => PasswordInput.Focus();
         }

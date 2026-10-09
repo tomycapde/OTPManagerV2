@@ -30,6 +30,10 @@ namespace OTPManager.Desktop
         public MainWindow()
         {
             InitializeComponent();
+            ThemeService.RegisterWindow(this);
+            ThemeService.ThemeChanged += OnThemeChanged;
+            UpdateThemeUi(ThemeService.CurrentTheme, ThemeService.IsDark);
+
             Loaded += MainWindow_Loaded;
 
             itemsView = CollectionViewSource.GetDefaultView(allItems);
@@ -61,7 +65,7 @@ namespace OTPManager.Desktop
         {
             if (HeaderButtonsPanel == null) return;
 
-            const double wrapBreakpoint = 570.0;
+            const double wrapBreakpoint = 640.0;
             bool shouldWrap = windowWidth < wrapBreakpoint;
 
             if (isHeaderWrapped == shouldWrap) return;
@@ -194,15 +198,15 @@ namespace OTPManager.Desktop
 
                     if (isSelected)
                     {
-                        btn.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 103, 192));
-                        btn.Foreground = System.Windows.Media.Brushes.White;
-                        btn.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 90, 158));
+                        btn.SetResourceReference(Control.BackgroundProperty, "ChipActiveBackgroundBrush");
+                        btn.SetResourceReference(Control.ForegroundProperty, "ChipActiveForegroundBrush");
+                        btn.SetResourceReference(Control.BorderBrushProperty, "ChipActiveBorderBrush");
                     }
                     else
                     {
-                        btn.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(238, 244, 252));
-                        btn.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 90, 158));
-                        btn.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(204, 227, 248));
+                        btn.SetResourceReference(Control.BackgroundProperty, "ChipBackgroundBrush");
+                        btn.SetResourceReference(Control.ForegroundProperty, "ChipForegroundBrush");
+                        btn.SetResourceReference(Control.BorderBrushProperty, "ChipBorderBrush");
                     }
                 }
             }
@@ -217,11 +221,11 @@ namespace OTPManager.Desktop
 
             if (remainingSeconds < 5)
             {
-                TotpProgressBar.Foreground = System.Windows.Media.Brushes.DarkOrange;
+                TotpProgressBar.SetResourceReference(ProgressBar.ForegroundProperty, "ProgressBarWarningBrush");
             }
             else
             {
-                TotpProgressBar.Foreground = System.Windows.Media.Brushes.DodgerBlue;
+                TotpProgressBar.SetResourceReference(ProgressBar.ForegroundProperty, "ProgressBarFillBrush");
             }
 
             long currentStep = DateTimeOffset.UtcNow.ToUnixTimeSeconds() / OTPGenerator.TimeStepSeconds;
@@ -332,6 +336,55 @@ namespace OTPManager.Desktop
             {
                 btn.ContextMenu.PlacementTarget = btn;
                 btn.ContextMenu.IsOpen = true;
+            }
+        }
+
+        private void ThemeMenu_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.ContextMenu != null)
+            {
+                btn.ContextMenu.PlacementTarget = btn;
+                btn.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+                btn.ContextMenu.IsOpen = true;
+            }
+        }
+
+        private void ThemeLight_Click(object sender, RoutedEventArgs e)
+        {
+            ThemeService.SetTheme(AppTheme.Light);
+        }
+
+        private void ThemeDark_Click(object sender, RoutedEventArgs e)
+        {
+            ThemeService.SetTheme(AppTheme.Dark);
+        }
+
+        private void ThemeSystem_Click(object sender, RoutedEventArgs e)
+        {
+            ThemeService.SetTheme(AppTheme.System);
+        }
+
+        private void OnThemeChanged(AppTheme theme, bool isDark)
+        {
+            UpdateThemeUi(theme, isDark);
+            UpdateTagFilterBarActiveState();
+        }
+
+        private void UpdateThemeUi(AppTheme theme, bool isDark)
+        {
+            if (ThemeLightMenuItem != null) ThemeLightMenuItem.IsChecked = theme == AppTheme.Light;
+            if (ThemeDarkMenuItem != null) ThemeDarkMenuItem.IsChecked = theme == AppTheme.Dark;
+            if (ThemeSystemMenuItem != null) ThemeSystemMenuItem.IsChecked = theme == AppTheme.System;
+
+            if (ThemeIconText != null)
+            {
+                ThemeIconText.Text = theme switch
+                {
+                    AppTheme.Light => "☀️",
+                    AppTheme.Dark => "🌙",
+                    AppTheme.System => isDark ? "🌙" : "☀️",
+                    _ => "🌓"
+                };
             }
         }
 

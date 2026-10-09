@@ -1,0 +1,74 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Window & Layout -->
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#18191D"/>
+    <SolidColorBrush x:Key="DialogBackgroundBrush" Color="#1E2026"/>
+    <SolidColorBrush x:Key="HeaderBackgroundBrush" Color="#1F2127"/>
+    <SolidColorBrush x:Key="HeaderBorderBrush" Color="#2D313A"/>
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#22242B"/>
+    <SolidColorBrush x:Key="CardBorderBrush" Color="#2F333D"/>
+    <SolidColorBrush x:Key="BannerBackgroundBrush" Color="#1E2838"/>
+    <SolidColorBrush x:Key="BannerBorderBrush" Color="#2E425E"/>
+
+    <!-- Text -->
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F1F3F5"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#D0D4DC"/>
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#8890A0"/>
+    <SolidColorBrush x:Key="TextPlaceholderBrush" Color="#727A8A"/>
+    <SolidColorBrush x:Key="CardTitleForegroundBrush" Color="#58A6FF"/>
+    <SolidColorBrush x:Key="CardOtpForegroundBrush" Color="#F1F3F5"/>
+    <SolidColorBrush x:Key="IconButtonForegroundBrush" Color="#A0A8B8"/>
+    <SolidColorBrush x:Key="ErrorForegroundBrush" Color="#F85149"/>
+
+    <!-- Badges & Chips -->
+    <SolidColorBrush x:Key="BadgeBackgroundBrush" Color="#1E2C3D"/>
+    <SolidColorBrush x:Key="BadgeForegroundBrush" Color="#58A6FF"/>
+    <SolidColorBrush x:Key="ChipBackgroundBrush" Color="#1E2C3D"/>
+    <SolidColorBrush x:Key="ChipForegroundBrush" Color="#58A6FF"/>
+    <SolidColorBrush x:Key="ChipBorderBrush" Color="#2C4666"/>
+    <SolidColorBrush x:Key="ChipActiveBackgroundBrush" Color="#2F88E6"/>
+    <SolidColorBrush x:Key="ChipActiveForegroundBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="ChipActiveBorderBrush" Color="#4AA3FF"/>
+
+    <!-- Buttons -->
+    <SolidColorBrush x:Key="PrimaryButtonBackgroundBrush" Color="#2F88E6"/>
+    <SolidColorBrush x:Key="PrimaryButtonHoverBackgroundBrush" Color="#4AA3FF"/>
+    <SolidColorBrush x:Key="PrimaryButtonForegroundBrush" Color="#FFFFFF"/>
+    
+    <SolidColorBrush x:Key="SecondaryButtonBackgroundBrush" Color="#282B34"/>
+    <SolidColorBrush x:Key="SecondaryButtonForegroundBrush" Color="#E0E4EB"/>
+    <SolidColorBrush x:Key="SecondaryButtonBorderBrush" Color="#3A3F4D"/>
+    <SolidColorBrush x:Key="SecondaryButtonHoverBackgroundBrush" Color="#343844"/>
+
+    <SolidColorBrush x:Key="CopyButtonBackgroundBrush" Color="#1E2C3D"/>
+    <SolidColorBrush x:Key="CopyButtonForegroundBrush" Color="#58A6FF"/>
+    <SolidColorBrush x:Key="CopyButtonBorderBrush" Color="#2C4666"/>
+
+    <!-- Inputs & Search -->
+    <SolidColorBrush x:Key="InputBackgroundBrush" Color="#1B1D23"/>
+    <SolidColorBrush x:Key="InputForegroundBrush" Color="#F1F3F5"/>
+    <SolidColorBrush x:Key="InputBorderBrush" Color="#3A3F4D"/>
+    <SolidColorBrush x:Key="InputDisabledBackgroundBrush" Color="#242730"/>
+    <SolidColorBrush x:Key="InputDisabledForegroundBrush" Color="#7E8796"/>
+    <SolidColorBrush x:Key="SearchBoxBackgroundBrush" Color="#1E2026"/>
+    <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="#333742"/>
+    <SolidColorBrush x:Key="SearchBoxForegroundBrush" Color="#F1F3F5"/>
+
+    <!-- Progress Bar -->
+    <SolidColorBrush x:Key="ProgressBarTrackBrush" Color="#2C303B"/>
+    <SolidColorBrush x:Key="ProgressBarFillBrush" Color="#2F88E6"/>
+    <SolidColorBrush x:Key="ProgressBarWarningBrush" Color="#FFA726"/>
+
+    <!-- Context Menu & Popup -->
+    <SolidColorBrush x:Key="ContextMenuBackgroundBrush" Color="#22242B"/>
+    <SolidColorBrush x:Key="ContextMenuForegroundBrush" Color="#F1F3F5"/>
+    <SolidColorBrush x:Key="ContextMenuBorderBrush" Color="#2F333D"/>
+    <SolidColorBrush x:Key="MenuItemHoverBackgroundBrush" Color="#2E3340"/>
+    <SolidColorBrush x:Key="SeparatorBrush" Color="#2F333D"/>
+
+    <!-- ScrollBar -->
+    <SolidColorBrush x:Key="ScrollBarThumbBrush" Color="#4E5463"/>
+    <SolidColorBrush x:Key="ScrollBarThumbHoverBrush" Color="#687082"/>
+
+</ResourceDictionary>

@@ -25,6 +25,7 @@ namespace OTPManager.Desktop.Views
         public CameraScannerWindow()
         {
             InitializeComponent();
+            ThemeService.RegisterWindow(this);
             Loaded += CameraScannerWindow_Loaded;
             Closing += CameraScannerWindow_Closing;
         }

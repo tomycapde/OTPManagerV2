@@ -55,7 +55,7 @@ No necesitas compilar el proyecto para empezar a usarlo. Puedes descargar la ver
 👉 **[Descargar la última versión en GitHub Releases](https://github.com/tomycapde/OTPManagerV2/releases/latest)**
 
 ### Pasos rápidos:
-1. Descarga el archivo `.zip` de la última versión disponible (ej. `OTPManagerV2-v1.2.0-win-x64.zip`).
+1. Descarga el archivo `.zip` de la última versión disponible (ej. `OTPManagerV2-v1.3.0-win-x64.zip`).
 2. Descomprímelo en cualquier carpeta de tu equipo.
 3. Ejecuta **`OTPManagerV2.exe`**.
 

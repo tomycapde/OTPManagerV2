@@ -5,16 +5,16 @@
         Height="480" Width="460"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
-        Background="#F9F9FB"
+        Background="{DynamicResource DialogBackgroundBrush}"
         FontFamily="Segoe UI">
 
     <Window.Resources>
         <Style x:Key="SuggestionChipStyle" TargetType="Button">
-            <Setter Property="Background" Value="#F0F4F9"/>
-            <Setter Property="Foreground" Value="#005A9E"/>
+            <Setter Property="Background" Value="{DynamicResource ChipBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ChipForegroundBrush}"/>
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="BorderBrush" Value="#D0E2F5"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ChipBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="8,3"/>
             <Setter Property="Margin" Value="0,0,6,5"/>
@@ -44,7 +44,7 @@
         </Grid.RowDefinitions>
 
         <!-- QR & URI Import Options Banner -->
-        <Border Grid.Row="0" Background="#EEF4FC" BorderBrush="#C7DDF7" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,0,0,12">
+        <Border Grid.Row="0" Background="{DynamicResource BannerBackgroundBrush}" BorderBrush="{DynamicResource BannerBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,0,0,12">
             <StackPanel>
                 <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions>
@@ -52,7 +52,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0" Text="⚡ Importar Código QR:" FontWeight="SemiBold" FontSize="11" Foreground="#005A9E" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Grid.Column="0" Text="⚡ Importar Código QR:" FontWeight="SemiBold" FontSize="11" Foreground="{DynamicResource CardTitleForegroundBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
                     
                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button Content="🖥️ Pantalla" Style="{StaticResource SuggestionChipStyle}" Padding="7,3" ToolTip="Recortar y escanear un código QR visible en tu pantalla" Click="ScanScreen_Click"/>
@@ -61,19 +61,19 @@
                     </StackPanel>
                 </Grid>
 
-                <TextBox x:Name="UriInput" Height="26" FontSize="11" Padding="4,2" TextChanged="UriInput_TextChanged" ToolTip="Pega aquí un enlace otpauth://totp/... o se autocompletará con el escáner QR"/>
+                <TextBox x:Name="UriInput" Height="28" FontSize="11" Padding="4,2" TextChanged="UriInput_TextChanged" ToolTip="Pega aquí un enlace otpauth://totp/... o se autocompletará con el escáner QR"/>
             </StackPanel>
         </Border>
 
         <!-- Account / User Name -->
         <StackPanel Grid.Row="1" Margin="0,0,0,10">
-            <TextBlock Text="Nombre de cuenta / Título:" FontSize="12" Foreground="#444444" Margin="0,0,0,4"/>
+            <TextBlock Text="Nombre de cuenta / Título:" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
             <TextBox x:Name="LabelInput" Height="30" FontSize="13" Padding="6,4"/>
         </StackPanel>
 
         <!-- TAGS section -->
         <StackPanel Grid.Row="2" Margin="0,0,0,10">
-            <TextBlock Text="Etiquetas / Tags:" FontSize="12" Foreground="#444444" Margin="0,0,0,4"/>
+            <TextBlock Text="Etiquetas / Tags:" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
             <TextBox x:Name="TagsInput" Height="30" FontSize="13" Padding="6,4"/>
         </StackPanel>
 
@@ -84,7 +84,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Clave secreta (Base32):" FontSize="12" Foreground="#444444" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="0" Text="Clave secreta (Base32):" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
                 <Button x:Name="UnlockSecretBtn" Grid.Column="1" Content="🔒 Modificar semilla" Style="{StaticResource SuggestionChipStyle}" Padding="7,2" Margin="0" Visibility="Collapsed" Click="UnlockSecret_Click"/>
             </Grid>
             <TextBox x:Name="SecretInput" Height="30" FontSize="13" Padding="6,4" CharacterCasing="Upper"/>
@@ -99,7 +99,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0">
-                <TextBlock Text="Dígitos:" FontSize="12" Foreground="#444444" Margin="0,0,0,4"/>
+                <TextBlock Text="Dígitos:" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                 <ComboBox x:Name="DigitsSelect" Height="30" SelectedIndex="0">
                     <ComboBoxItem Content="6 Dígitos"/>
                     <ComboBoxItem Content="8 Dígitos"/>
@@ -107,7 +107,7 @@
             </StackPanel>
 
             <StackPanel Grid.Column="2">
-                <TextBlock Text="Algoritmo:" FontSize="12" Foreground="#444444" Margin="0,0,0,4"/>
+                <TextBlock Text="Algoritmo:" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                 <ComboBox x:Name="AlgorithmSelect" Height="30" SelectedIndex="0">
                     <ComboBoxItem Content="SHA1"/>
                     <ComboBoxItem Content="SHA256"/>
@@ -116,11 +116,11 @@
             </StackPanel>
         </Grid>
 
-        <TextBlock x:Name="ErrorMessage" Grid.Row="5" Foreground="#D13438" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" Visibility="Collapsed"/>
+        <TextBlock x:Name="ErrorMessage" Grid.Row="5" Foreground="{DynamicResource ErrorForegroundBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" Visibility="Collapsed"/>
 
         <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Cancelar" IsCancel="True" Width="85" Height="32" Margin="0,0,8,0" Click="Cancel_Click"/>
-            <Button Content="Guardar" IsDefault="True" Width="85" Height="32" Background="#0067C0" Foreground="White" BorderThickness="0" Click="Save_Click"/>
+            <Button Content="Cancelar" IsCancel="True" Width="85" Height="32" Margin="0,0,8,0" Style="{StaticResource SecondaryButtonStyle}" Click="Cancel_Click"/>
+            <Button Content="Guardar" IsDefault="True" Width="85" Height="32" Style="{StaticResource PrimaryButtonStyle}" Click="Save_Click"/>
         </StackPanel>
     </Grid>
 </Window>

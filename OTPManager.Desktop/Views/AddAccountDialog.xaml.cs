@@ -19,6 +19,7 @@ namespace OTPManager.Desktop.Views
         public AddAccountDialog(OTPGenerator? existing = null)
         {
             InitializeComponent();
+            ThemeService.RegisterWindow(this);
             ResultGenerator = existing ?? new OTPGenerator();
             isEditing = existing != null;
 
@@ -42,8 +43,8 @@ namespace OTPManager.Desktop.Views
 
                 // Lock secret key by default in edit mode to prevent accidental modification
                 SecretInput.IsReadOnly = true;
-                SecretInput.Background = new SolidColorBrush(Color.FromRgb(243, 244, 246));
-                SecretInput.Foreground = new SolidColorBrush(Color.FromRgb(107, 114, 128));
+                SecretInput.SetResourceReference(TextBox.BackgroundProperty, "InputDisabledBackgroundBrush");
+                SecretInput.SetResourceReference(TextBox.ForegroundProperty, "InputDisabledForegroundBrush");
                 UnlockSecretBtn.Visibility = Visibility.Visible;
 
                 DigitsSelect.SelectedIndex = existing.NumDigits == 8 ? 1 : 0;
@@ -70,8 +71,8 @@ namespace OTPManager.Desktop.Views
                 {
                     isSecretUnlocked = true;
                     SecretInput.IsReadOnly = false;
-                    SecretInput.Background = Brushes.White;
-                    SecretInput.Foreground = Brushes.Black;
+                    SecretInput.SetResourceReference(TextBox.BackgroundProperty, "InputBackgroundBrush");
+                    SecretInput.SetResourceReference(TextBox.ForegroundProperty, "InputForegroundBrush");
                     UnlockSecretBtn.Content = "🔓 Semilla desbloqueada";
                     UnlockSecretBtn.IsEnabled = false;
                     SecretInput.Focus();
@@ -149,8 +150,8 @@ namespace OTPManager.Desktop.Views
 
                 isSecretUnlocked = true;
                 SecretInput.IsReadOnly = false;
-                SecretInput.Background = Brushes.White;
-                SecretInput.Foreground = Brushes.Black;
+                SecretInput.SetResourceReference(TextBox.BackgroundProperty, "InputBackgroundBrush");
+                SecretInput.SetResourceReference(TextBox.ForegroundProperty, "InputForegroundBrush");
                 UnlockSecretBtn.Content = "🔓 Semilla desbloqueada";
                 UnlockSecretBtn.IsEnabled = false;
             }
